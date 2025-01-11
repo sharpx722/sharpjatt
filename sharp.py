@@ -21,7 +21,7 @@ redeem_codes_collection = db['redeem_codes']
 attack_logs_collection = db['user_attack_logs']
 
 # Bot Configuration
-TELEGRAM_BOT_TOKEN = '7903565188:AAELJdbIm-uvB6SmUgae5roz_z_lc_PwQFs'
+TELEGRAM_BOT_TOKEN = '7903565188:AAH2WWj8903AQnEWHx7nzBTH4SZcMn6AAYA'
 ADMIN_USER_ID = 1009132250
 ADMIN_USER_ID = 1009132250 
 COOLDOWN_PERIOD = timedelta(minutes=1) 
@@ -112,16 +112,13 @@ async def start(update: Update, context: CallbackContext):
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id 
 
-    # Check if the user is allowed to use the bot
-    if not await is_user_allowed(user_id):
-        await context.bot.send_message(chat_id=chat_id, text="*❌ You are not authorized to use this bot!*", parse_mode='Markdown')
-        return
-
+    # Send welcome message (this happens for all users, regardless of approval)
     message = (
         "💀 *WELCOME TO BGMI D-DoS!* 💀\n\n"
         "/attack <IP> <Port> <Duration> – *Unleash an unstoppable DDOS storm. Bring BGMI to its knees.*\n"
         "/help – *Decode the tools of annihilation.*\n\n"
- "📱 *After payment, send your ss in @SharpX72 to gain access*\n"
+        "📱 *Price : 700 Rs For Full Season*\n"
+        "📱 *After payment, send your ss in @SharpX72 to gain access*\n"
         "📸 Here’s your payment scanner:"
     )
     
@@ -129,6 +126,11 @@ async def start(update: Update, context: CallbackContext):
     with open('scanner.png', 'rb') as img:
         await context.bot.send_photo(chat_id, img, caption=message)
 
+    # Check if the user is allowed to use the bot after the welcome message
+    if not await is_user_allowed(user_id):
+        # Send error message if user is not authorized
+        await context.bot.send_message(chat_id=chat_id, text="*❌ You are not authorized to use this bot!*", parse_mode='Markdown')
+        return
 
 
 async def add_user(update: Update, context: CallbackContext):
@@ -841,4 +843,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
